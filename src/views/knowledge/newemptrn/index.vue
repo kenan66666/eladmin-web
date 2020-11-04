@@ -48,7 +48,7 @@
             :on-change="onChange"
           >
             <div class="eladmin-upload"><i class="el-icon-upload" /> 添加文件</div>
-            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{fileUploadApiN}}</div>
+            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{ fileUploadApiN }}</div>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -132,14 +132,13 @@ import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
-import DateRangePicker from '@/components/DateRangePicker'
 import { mapGetters } from 'vuex'
-import { upload2, upload3 } from "@/utils/upload"
+import { upload2, upload3 } from '@/utils/upload'
 
 const defaultForm = { id: null, name: null, isTop: '1', subCount: 0, pid: null, docDir: null, enabled: 'true' }
 export default {
   name: 'NewEmpTrn',
-  components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker },
+  components: { Treeselect, crudOperation, rrOperation, udOperation },
   cruds() {
     return CRUD({ title: '业务逻辑', url: 'api/newemptrn', crudMethod: { ...crudDept }})
   },
@@ -148,8 +147,8 @@ export default {
   dicts: ['dept_status'],
   data() {
     return {
-      uploadUrl: "",
-      file: "",
+      uploadUrl: '',
+      file: '',
       // headers: { 'Authorization': getToken() },
       depts: [],
       rules: {
@@ -185,8 +184,8 @@ export default {
       console.log('upload函数执行到了')
       console.log(this.form.name)
       console.log(this.file)
-      if (this.$refs["form"]) {
-        this.$refs["form"].validate((valid) => {
+      if (this.$refs['form']) {
+        this.$refs['form'].validate((valid) => {
           if (valid) {
             if (!this.file && this.file.size === 0 && !this.form.name) {
               this.$notify({
@@ -247,8 +246,7 @@ export default {
               dangerouslyUseHTMLString: true
             })
           })
-      }
-      else if (this.crud.status.edit === 1) {
+      } else if (this.crud.status.edit === 1) {
         upload3(this.fileUploadApiN, data)
           .then((res) => {
             this.loading = false

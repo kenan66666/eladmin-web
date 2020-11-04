@@ -48,7 +48,7 @@
             :on-change="onChange"
           >
             <div class="eladmin-upload"><i class="el-icon-upload" /> 添加文件</div>
-            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{fileUploadApiB}}</div>
+            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{ fileUploadApiB }}</div>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -132,14 +132,13 @@ import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
-import DateRangePicker from '@/components/DateRangePicker'
 import { mapGetters } from 'vuex'
-import { upload2, upload3 } from "@/utils/upload"
+import { upload2, upload3 } from '@/utils/upload'
 
 const defaultForm = { id: null, name: null, isTop: '1', subCount: 0, pid: null, docDir: null, enabled: 'true' }
 export default {
   name: 'Busslogic',
-  components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker },
+  components: { Treeselect, crudOperation, rrOperation, udOperation },
   cruds() {
     return CRUD({ title: '业务逻辑', url: 'api/busslogic', crudMethod: { ...crudDept }})
   },
@@ -148,8 +147,8 @@ export default {
   dicts: ['dept_status'],
   data() {
     return {
-      uploadUrl: "",
-      file: "",
+      uploadUrl: '',
+      file: '',
       // headers: { 'Authorization': getToken() },
       depts: [],
       rules: {
@@ -182,51 +181,51 @@ export default {
     // 2.在覆盖默认上传行为的情况下，upload的submit方法，应该是做了file对象和vue-upload组件
     // 的绑定，将上传的文件变为vue-upload组件的一个附加的对象。然后触发了http-request属性中的函数。
     upload() {
-      console.log("upload函数执行到了")
+      console.log('upload函数执行到了')
       console.log(this.form.name)
       console.log(this.file)
-      if (this.$refs["form"]) {
-        this.$refs["form"].validate((valid) => {
+      if (this.$refs['form']) {
+        this.$refs['form'].validate((valid) => {
           if (valid) {
             if (!this.file && this.file.size === 0 && !this.form.name) {
               this.$notify({
-                title: "请填写名称或上传的文件",
-                type: "error",
-                duration: 2500,
-              });
-              return;
+                title: '请填写名称或上传的文件',
+                type: 'error',
+                duration: 2500
+              })
+              return
             }
-            if(this.file){
-              this.$refs.upload.submit();
-            }else {
-              this.crud.submitCU();
-              console.log("submitCU已经执行到了")
+            if (this.file) {
+              this.$refs.upload.submit()
+            } else {
+              this.crud.submitCU()
+              console.log('submitCU已经执行到了')
             }
-            console.log("submit已经执行完毕")
+            console.log('submit已经执行完毕')
           }
-        });
+        })
       }
     },
-    uploadAction(){
-      console.log("uploadAction开始执行")
+    uploadAction() {
+      console.log('uploadAction开始执行')
       console.log(this.file)
-      var data = new FormData();
-      data.append("file", this.file.raw);
-      data.append("id", this.form.id);
-      data.append("enabled", this.form.enabled);
-      data.append("name", this.form.name);
-      data.append("pid", this.form.pid);
+      var data = new FormData()
+      data.append('file', this.file.raw)
+      data.append('id', this.form.id)
+      data.append('enabled', this.form.enabled)
+      data.append('name', this.form.name)
+      data.append('pid', this.form.pid)
       if (this.crud.status.add === 1) {
         upload2(this.fileUploadApiB, data)
           .then((res) => {
-            this.loading = false;
+            this.loading = false
             if (res) {
               this.$notify({
-                title: "上传成功",
-                type: "success",
-                duration: 2500,
-              });
-              this.cancel();
+                title: '上传成功',
+                type: 'success',
+                duration: 2500
+              })
+              this.cancel()
               this.$refs.upload.clearFiles()
               this.crud.status.add = CRUD.STATUS.NORMAL
               this.crud.status.cu = CRUD.STATUS.NORMAL
@@ -235,30 +234,29 @@ export default {
             } else {
               this.$notify({
                 title: res,
-                type: "error",
-                duration: 2500,
-              });
+                type: 'error',
+                duration: 2500
+              })
             }
           })
           .catch((err) => {
-            this.loading = false;
-            this.$alert(err, "错误提示", {
-              confirmButtonText: "确定",
-              dangerouslyUseHTMLString: true,
-            });
-          });
-      }
-      else if (this.crud.status.edit === 1) {
+            this.loading = false
+            this.$alert(err, '错误提示', {
+              confirmButtonText: '确定',
+              dangerouslyUseHTMLString: true
+            })
+          })
+      } else if (this.crud.status.edit === 1) {
         upload3(this.fileUploadApiB, data)
           .then((res) => {
-            this.loading = false;
+            this.loading = false
             if (res) {
               this.$notify({
-                title: "上传成功",
-                type: "success",
-                duration: 2500,
-              });
-              this.cancel();
+                title: '上传成功',
+                type: 'success',
+                duration: 2500
+              })
+              this.cancel()
               this.$refs.upload.clearFiles()
               this.crud.status.edit = CRUD.STATUS.NORMAL
               this.crud.status.cu = CRUD.STATUS.NORMAL
@@ -267,42 +265,41 @@ export default {
             } else {
               this.$notify({
                 title: res,
-                type: "error",
-                duration: 2500,
-              });
+                type: 'error',
+                duration: 2500
+              })
             }
           })
           .catch((err) => {
-            this.loading = false;
-            this.$alert(err, "错误提示", {
-              confirmButtonText: "确定",
-              dangerouslyUseHTMLString: true,
-            });
-          });
+            this.loading = false
+            this.$alert(err, '错误提示', {
+              confirmButtonText: '确定',
+              dangerouslyUseHTMLString: true
+            })
+          })
       }
     },
     onChange(file, fileList) {
       if (fileList) {
-        this.form.fileList = fileList.slice(-1);
+        this.form.fileList = fileList.slice(-1)
       }
       // file文件对象来源于el-upload组件？
-      this.file = file;
+      this.file = file
     },
     cancel() {
-      this.isUpload = false;
-      this.clearFile();
-      this.form.fileList = [];
+      this.isUpload = false
+      this.clearFile()
+      this.form.fileList = []
     },
     clearFile() {
-      const mainImg = this.$refs.upload;
+      const mainImg = this.$refs.upload
       if (mainImg && mainImg.length) {
         mainImg.forEach((item) => {
           // item.uploadFiles.length = 0;
-          item.clearFiles();
-        });
+          item.clearFiles()
+        })
       }
     },
-
 
     getDeptDatas(tree, treeNode, resolve) {
       const params = { pid: tree.id }
