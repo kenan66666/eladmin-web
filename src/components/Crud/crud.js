@@ -60,7 +60,7 @@ function CRUD(options) {
   options = mergeOptions(defaultOptions, options)
   const data = {
     ...options,
-    // 记录数据状态
+    // 记录数据状态，constdata基本上都是一些状态信息，options除外。
     dataStatus: {},
     status: {
       add: CRUD.STATUS.NORMAL,
@@ -829,7 +829,7 @@ CRUD.HOOK = {
 }
 
 /**
- * CRUD状态
+ * CRUD状态。这个是CRUD.，是不是和CRUD()方法有关系，还是独立的？
  */
 CRUD.STATUS = {
   NORMAL: 0,
@@ -838,7 +838,7 @@ CRUD.STATUS = {
 }
 
 /**
- * CRUD通知类型
+ * CRUD通知类型。这个是CRUD.，是不是和CRUD()方法有关系，还是独立的？
  */
 CRUD.NOTIFICATION_TYPE = {
   SUCCESS: 'success',

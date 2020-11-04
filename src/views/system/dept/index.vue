@@ -13,7 +13,7 @@
       </div>
       <crudOperation :permission="permission" />
     </div>
-    <!--表单组件-->
+    <!--表单组件append-to-body-->
     <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="500px">
       <el-form ref="form" inline :model="form" :rules="rules" size="small" label-width="80px">
         <el-form-item label="部门名称" prop="name">
@@ -47,6 +47,7 @@
           />
         </el-form-item>
       </el-form>
+      <!--这个slot插入的是什么呢？crud.status.cu === 2-->
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
         <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
@@ -69,7 +70,7 @@
       <el-table-column label="名称" prop="name" />
       <el-table-column label="排序" prop="deptSort" />
       <el-table-column label="状态" align="center" prop="enabled">
-        <template slot-scope="scope">
+        <template slot-scope="scope">{{ scope.row.id }}
           <el-switch
             v-model="scope.row.enabled"
             :disabled="scope.row.id === 1"
@@ -116,6 +117,7 @@ export default {
   cruds() {
     return CRUD({ title: '部门', url: 'api/dept', crudMethod: { ...crudDept }})
   },
+  // 下行中的form方法和form对象是否有重名的问题？
   mixins: [presenter(), header(), form(defaultForm), crud()],
   // 设置数据字典
   dicts: ['dept_status'],
@@ -150,11 +152,13 @@ export default {
         })
       }, 100)
     },
-    // 新增与编辑前做的操作
+    // 新增与编辑前做的操作，点击编辑之后，执行的一个函数，
     [CRUD.HOOK.afterToCU](crud, form) {
+      // console.log(form)
       if (form.pid !== null) {
         form.isTop = '0'
       } else if (form.id !== null) {
+        // 编辑，不是新增的场景
         form.isTop = '1'
       }
       form.enabled = `${form.enabled}`
@@ -162,22 +166,28 @@ export default {
         this.getSupDepts(form.id)
       } else {
         this.getDepts()
+        // 拿到Depts有什么用？
       }
     },
     getSupDepts(id) {
       crudDept.getDeptSuperior(id).then(res => {
         const date = res.content
-        this.buildDepts(date)
+        // this.buildDepts(date)
         this.depts = date
+        // 通过子部门拿到所有的父级部门
+        console.log(this.depts)
       })
     },
     buildDepts(depts) {
+      console.log(depts)
       depts.forEach(data => {
         if (data.children) {
           this.buildDepts(data.children)
         }
         if (data.hasChildren && !data.children) {
+          // hasChildren和children各是什么意思？hasChildren是bool？children是自己的子部门内容？
           data.children = null
+          // 为什么要把子部门赋值为空？
         }
       })
     },
@@ -186,6 +196,7 @@ export default {
         this.depts = res.content.map(function(obj) {
           if (obj.hasChildren) {
             obj.children = null
+            // 为什么要把子部门赋值为空？
           }
           return obj
         })
@@ -198,6 +209,7 @@ export default {
           parentNode.children = res.content.map(function(obj) {
             if (obj.hasChildren) {
               obj.children = null
+              // 有子部门的话，把子部门设为空，是否是为了懒加载？
             }
             return obj
           })

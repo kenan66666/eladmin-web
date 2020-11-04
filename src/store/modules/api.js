@@ -19,6 +19,10 @@ const api = {
     swaggerApi: baseUrl + '/swagger-ui.html',
     // 文件上传
     fileUploadApi: baseUrl + '/api/localStorage',
+    // 业务逻辑文件上传
+    fileUploadApiB: baseUrl + '/api/busslogic/file',
+    // 新员工培训文件上传
+    fileUploadApiN: baseUrl + '/api/newemptrn/file',
     // baseUrl，
     baseApi: baseUrl
   }

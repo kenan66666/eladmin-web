@@ -9,3 +9,17 @@ export function upload(api, file) {
   }
   return axios.post(api, data, config)
 }
+
+export function upload2(api, data) {
+  const config = {
+    headers: { 'Authorization': getToken(), 'Content-Type': 'multipart/form-data' }
+  }
+  return axios.post(api, data, config)
+}
+
+export function upload3(api, data) {
+  const config = {
+    headers: { 'Authorization': getToken(), 'Content-Type': 'multipart/form-data' }
+  }
+  return axios.put(api, data, config)
+}
