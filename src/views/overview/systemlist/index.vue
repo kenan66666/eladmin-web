@@ -5,41 +5,45 @@
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
         <el-input v-model="query.sysname" clearable size="small" placeholder="输入系统名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-input v-model="query.name" clearable size="small" placeholder="输入失效模式名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <el-input v-model="query.area" clearable size="small" placeholder="输入区域名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <date-range-picker v-model="query.createTime" class="date-item" />
-        <el-select v-model="query.enabled" clearable size="small" placeholder="状态" class="filter-item" style="width: 90px" @change="crud.toQuery">
-          <el-option v-for="item in enabledTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+        <el-select v-model="query.remark" clearable size="small" placeholder="状态" class="filter-item" style="width: 90px" @change="crud.toQuery">
+          <el-option v-for="item in remarkTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
         </el-select>
         <rrOperation />
       </div>
+      <!--自封闭的子组件，闭合的/>之前要加一个空格-->
       <crudOperation :permission="permission" />
     </div>
     <!--表单组件-->
     <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="600px">
-      <el-form ref="form" inline :model="form" :rules="rules" size="small" label-width="120px">
-        <el-form-item label="系统名称" prop="name">
-          <el-input v-model="form.sysname" style="width: 150px;" />
+      <!--ref=form是这个form组件的别名，通过别名指向这个dom元素，:model=form指的是form绑定的数据对象名-->
+      <el-form ref="form" inline :model="form" :rules="rules" size="small" :label-position="labelPosition" label-width="320px">
+        <el-form-item label="系统名称" prop="sysName" style="width: 370px;">
+          <!--带上冒号的属性，=号后面赋值为变量，:相当于v-bind:。没有带冒号的属性，=号后面赋值为常量-->
+          <systemName style="width: 150px;" :system-name-father="form.sysName" @getSysId="showSysId" />
+          <!--隐藏的这个el-input写不写都行-->
+          <!--
+          <el-input type="hidden" v-model="form.sysName"></el-input>
+          -->
         </el-form-item>
-        <el-form-item label="失效模式名称" prop="name">
+        <el-form-item label="系统编号" prop="sysId">
+          <el-input v-model="form.sysId" style="width: 150px;" />
+        </el-form-item>
+        <el-form-item label="标题" prop="name">
           <el-input v-model="form.name" style="width: 370px;" />
         </el-form-item>
-        <el-form-item label="顶层目录">
-          <el-radio-group v-model="form.isTop" style="width: 140px">
-            <el-radio label="1">是</el-radio>
-            <el-radio label="0">否</el-radio>
-          </el-radio-group>
+        <el-form-item label="现象" prop="appear">
+          <el-input v-model="form.appear" style="width: 370px;" />
+        </el-form-item>
+        <el-form-item label="根本原因" prop="rootCause">
+          <el-input v-model="form.rootCause" style="width: 370px;" />
+        </el-form-item>
+        <el-form-item label="问题防范或经验教训总结" prop="solution">
+          <el-input v-model="form.solution" style="width: 370px;" />
         </el-form-item>
         <el-form-item label="状态" prop="enabled">
           <el-radio v-for="item in dict.dept_status" :key="item.id" v-model="form.enabled" :label="item.value">{{ item.label }}</el-radio>
-        </el-form-item>
-        <el-form-item v-if="form.isTop === '0'" style="margin-bottom: 0;" label="上层目录" prop="pid">
-          <treeselect
-            v-model="form.pid"
-            :load-options="loadDepts"
-            :options="depts"
-            style="width: 370px;"
-            placeholder="选择上层目录"
-          />
         </el-form-item>
         <el-form-item label="上传" prop="fileList">
           <el-upload
@@ -53,7 +57,7 @@
             :on-change="onChange"
           >
             <div class="eladmin-upload"><i class="el-icon-upload" /> 添加文件</div>
-            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{ fileUploadApiB }}</div>
+            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{ fileUploadApiL }}</div>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -68,48 +72,12 @@
       v-loading="crud.loading"
       lazy
       :load="getDeptDatas"
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :data="crud.data"
-      row-key="id"
-      @select="crud.selectChange"
-      @select-all="crud.selectAllChange"
-      @selection-change="crud.selectionChangeHandler"
     >
-      <el-table-column :selectable="checkboxT" type="selection" width="55" />
-      <el-table-column label="系统名称" prop="sysname" width="150" />
-      <el-table-column label="失效模式名称" prop="name" width="400" />
-      <el-table-column prop="link" label="附件资料" width="220">
-        <template slot-scope="scope">
-          <el-popover
-            :content="'file/' + scope.row.docType + '/' + scope.row.docRealName"
-            placement="top-start"
-            title="路径"
-            width="200"
-            trigger="hover"
-          >
-            <a
-              slot="reference"
-              :href="baseApi + '/file/' + scope.row.docType + '/' + scope.row.docRealName"
-              class="el-link--primary"
-              style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color: #1890ff;font-size: 13px;"
-              target="_blank"
-            >
-              {{ scope.row.docName }}
-            </a>
-          </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" align="center" prop="enabled" width="60">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.enabled"
-            :disabled="scope.row.id === 1"
-            active-color="#409EFF"
-            inactive-color="#F56C6C"
-            @change="changeEnabled(scope.row, scope.row.enabled,)"
-          />
-        </template>
-      </el-table-column>
+      <el-table-column label="系统名称" prop="sysName" width="270" />
+      <el-table-column label="系统编号" prop="sysId" width="100" />
+      <el-table-column label="所属区域" prop="area" width="120" />
+      <el-table-column label="英文名称" prop="sysEnglishName" width="150" />
       <el-table-column prop="createTime" label="创建日期">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -121,7 +89,7 @@
             :data="scope.row"
             :permission="permission"
             :disabled-dle="scope.row.id === 1"
-            msg="确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！"
+            msg="确定删除吗，此操作不能撤销！"
           />
         </template>
       </el-table-column>
@@ -130,7 +98,7 @@
 </template>
 
 <script>
-import crudDept from '@/api/knlge/fmea'
+import crudDept from '@/api/overview/systemlist'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
@@ -138,22 +106,28 @@ import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
+import systemName from '@/components/SystemName'
 import DateRangePicker from '@/components/DateRangePicker'
 import { mapGetters } from 'vuex'
 import { upload2, upload3 } from '@/utils/upload'
 
+// isTop是位于顶层的意思，没有pid。
 const defaultForm = { id: null, name: null, isTop: '1', subCount: 0, pid: null, docDir: null, enabled: 'true' }
 export default {
-  name: 'Fmea',
-  components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker },
+  name: 'Overview',
+  components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker, systemName },
   cruds() {
-    return CRUD({ title: '失效模式', url: 'api/fmea', crudMethod: { ...crudDept }})
+    return CRUD({ title: '系统清单', url: 'api/overview/systemlist', crudMethod: { ...crudDept }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   // 设置数据字典
   dicts: ['dept_status'],
   data() {
     return {
+      labelPosition: 'top',
+      modelName: 'knowledge',
+      pageName: 'lessonlearn',
+      showVisible: false,
       uploadUrl: '',
       file: '',
       // headers: { 'Authorization': getToken() },
@@ -166,12 +140,17 @@ export default {
           { required: true, message: '请输入重要度', trigger: 'blur', type: 'number' }
         ]
       },
+      sform: {
+        syssName: 'name1',
+        name: 'name2',
+        enabled: true
+      },
       permission: {
         add: ['admin', 'dept:add'],
         edit: ['admin', 'dept:edit'],
         del: ['admin', 'dept:del']
       },
-      enabledTypeOptions: [
+      remarkTypeOptions: [
         { key: 'true', display_name: '正常' },
         { key: 'false', display_name: '不再使用' }
       ]
@@ -180,10 +159,24 @@ export default {
   computed: {
     ...mapGetters([
       'baseApi',
-      'fileUploadApiB'
+      'fileUploadApiL'
     ])
   },
   methods: {
+    show(id) {
+      this.showVisible = true
+      const params = { id: id }
+      crudDept.getDetail(params).then(res => {
+        this.sform = res.content[0]
+      })
+    },
+    showSysId(item) {
+      console.log(JSON.stringify(item))
+      // this.form.sysId = item.value
+      this.$set(this.form, 'sysId', item.value)
+      this.$set(this.form, 'sysName', item.label)
+      console.log(JSON.stringify(this.form))
+    },
     // 1.点击附件上传确认按钮时触发的函数，默认情况下(没有写http-request属性的情况下)，submit就触发了上传到后端的行为。
     // 2.在覆盖默认上传行为的情况下，upload的submit方法，应该是做了file对象和vue-upload组件
     // 的绑定，将上传的文件变为vue-upload组件的一个附加的对象。然后触发了http-request属性中的函数。
@@ -202,6 +195,7 @@ export default {
               })
               return
             }
+            // 有文件要上传时，执行submit，没有文件要上传时，执行submitCU
             if (this.file) {
               this.$refs.upload.submit()
             } else {
@@ -213,17 +207,22 @@ export default {
         })
       }
     },
+    // submit触发了el-upload组件的上传方法，el-upload有默认上传方法，也可以通过http-request来自定义上传方法，这个uploadAction就是自定义的上传方法。
     uploadAction() {
       console.log('uploadAction开始执行')
       console.log(this.file)
       var data = new FormData()
       data.append('file', this.file.raw)
       data.append('id', this.form.id)
-      data.append('enabled', this.form.enabled)
+      data.append('sysId', this.form.sysId)
+      data.append('sysName', this.form.sysName)
       data.append('name', this.form.name)
-      data.append('pid', this.form.pid)
+      data.append('appear', this.form.appear)
+      data.append('rootCause', this.form.rootCause)
+      data.append('solution', this.form.solution)
+      data.append('enabled', this.form.enabled)
       if (this.crud.status.add === 1) {
-        upload2(this.fileUploadApiB, data)
+        upload2(this.fileUploadApiL, data)
           .then((res) => {
             this.loading = false
             if (res) {
@@ -254,7 +253,7 @@ export default {
             })
           })
       } else if (this.crud.status.edit === 1) {
-        upload3(this.fileUploadApiB, data)
+        upload3(this.fileUploadApiL, data)
           .then((res) => {
             this.loading = false
             if (res) {
@@ -307,7 +306,13 @@ export default {
         })
       }
     },
-
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
+    },
     getDeptDatas(tree, treeNode, resolve) {
       const params = { pid: tree.id }
       setTimeout(() => {
@@ -328,26 +333,30 @@ export default {
     },
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
-      if (form.pid !== null) {
-        form.isTop = '0'
-      } else if (form.id !== null) {
-        form.isTop = '1'
-      }
+      // if (form.pid !== null) {
+      //   form.isTop = '0'
+      // } else if (form.id !== null) {
+      //   form.isTop = '1'
+      // }
       form.enabled = `${form.enabled}`
       if (form.id != null) {
+        // 编辑时，执行这个操作
         this.getSupDepts(form.id)
       } else {
+        // 新增时，执行这个操作
         this.getDepts()
       }
     },
     getSupDepts(id) {
       crudDept.getDeptSuperior(id).then(res => {
         const date = res.content
-        this.buildDepts(date)
+        // this.buildDepts(date)
         this.depts = date
       })
     },
     buildDepts(depts) {
+      // 对拿到的所有部门的json数据，forEach每一个执行下面的操作
+      // 把每一个有儿子，但是儿子又不存在的项的儿子字段置为空。
       depts.forEach(data => {
         if (data.children) {
           this.buildDepts(data.children)
@@ -385,16 +394,17 @@ export default {
     },
     // 提交前的验证
     [CRUD.HOOK.afterValidateCU]() {
-      if (this.form.pid !== null && this.form.pid === this.form.id) {
+      if (this.form.name === null) {
         this.$message({
-          message: '上级目录不能为空',
+          message: '标题必须填写',
           type: 'warning'
         })
         return false
       }
-      if (this.form.isTop === '1') {
-        this.form.pid = null
-      }
+      // 新建的或者说编辑的条目位于顶层，没有pid。
+      // if (this.form.isTop === '1') {
+      //   this.form.pid = null
+      // }
       return true
     },
     // 改变状态

@@ -2,15 +2,7 @@ import request from '@/utils/request'
 
 export function getDepts(params) {
   return request({
-    url: 'api/lessonlearn',
-    method: 'get',
-    params
-  })
-}
-
-export function getDetail(params) {
-  return request({
-    url: 'api/lessonlearn',
+    url: 'api/overview/systemlist',
     method: 'get',
     params
   })
@@ -19,7 +11,7 @@ export function getDetail(params) {
 export function getDeptSuperior(ids) {
   const data = ids.length || ids.length === 0 ? ids : Array.of(ids)
   return request({
-    url: 'api/lessonlearn/superior',
+    url: 'api/dept/superior',
     method: 'post',
     data
   })
@@ -27,7 +19,7 @@ export function getDeptSuperior(ids) {
 
 export function add(data) {
   return request({
-    url: 'api/lessonlearn',
+    url: 'api/overview',
     method: 'post',
     data
   })
@@ -35,7 +27,7 @@ export function add(data) {
 
 export function del(ids) {
   return request({
-    url: 'api/lessonlearn',
+    url: 'api/overview',
     method: 'delete',
     data: ids
   })
@@ -43,10 +35,10 @@ export function del(ids) {
 
 export function edit(data) {
   return request({
-    url: 'api/lessonlearn',
+    url: 'api/overview',
     method: 'put',
     data
   })
 }
 
-export default { add, edit, del, getDepts, getDetail, getDeptSuperior }
+export default { add, edit, del, getDepts, getDeptSuperior }

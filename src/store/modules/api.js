@@ -23,6 +23,8 @@ const api = {
     fileUploadApiB: baseUrl + '/api/busslogic/file',
     // 新员工培训文件上传
     fileUploadApiN: baseUrl + '/api/newemptrn/file',
+    // Lesson Learn文件上传
+    fileUploadApiL: baseUrl + '/api/lessonlearn/file',
     // baseUrl，
     baseApi: baseUrl
   }
