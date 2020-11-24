@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import systemNameAPI from '@/api/knlge/systemname'
 export default {
   name: 'SystemName',

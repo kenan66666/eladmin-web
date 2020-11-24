@@ -800,13 +800,13 @@ CRUD.HOOK = {
   beforeToAdd: 'beforeCrudToAdd',
   /** 新建 - 之后 */
   afterToAdd: 'afterCrudToAdd',
-  /** 编辑 - 之前 */
+  /** 编辑 - 之前                 应该是用于编辑之前，编辑作业需要单独执行的一些筹备事情*/
   beforeToEdit: 'beforeCrudToEdit',
-  /** 编辑 - 之后 */
+  /** 编辑 - 之后                 应该是用于编辑之后，编辑作业需要单独执行的一些收尾事情*/
   afterToEdit: 'afterCrudToEdit',
   /** 开始 "新建/编辑" - 之前 */
   beforeToCU: 'beforeCrudToCU',
-  /** 开始 "新建/编辑" - 之后 */
+  /** 开始 "新建/编辑" - 之后      应该是用于新建和编辑之后，这两件事情必须共同要做的一些收尾事情*/
   afterToCU: 'afterCrudToCU',
   /** "新建/编辑" 验证 - 之前 */
   beforeValidateCU: 'beforeCrudValidateCU',

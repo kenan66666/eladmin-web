@@ -19,62 +19,54 @@
     <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="600px">
       <!--ref=form是这个form组件的别名，通过别名指向这个dom元素，:model=form指的是form绑定的数据对象名-->
       <el-form ref="form" inline :model="form" :rules="rules" size="small" :label-position="labelPosition" label-width="320px">
-        <el-form-item label="系统名称" prop="sysName" style="width: 370px;">
-          <!--带上冒号的属性，=号后面赋值为变量，:相当于v-bind:。没有带冒号的属性，=号后面赋值为常量-->
-          <systemName style="width: 150px;" :system-name-father="form.sysName" @getSysId="showSysId" />
-          <!--隐藏的这个el-input写不写都行-->
-          <!--
-          <el-input type="hidden" v-model="form.sysName"></el-input>
-          -->
+        <el-form-item label="系统名称" prop="sysName">
+          <el-input v-model="form.sysName" style="width: 300px;" />
         </el-form-item>
         <el-form-item label="系统编号" prop="sysId">
-          <el-input v-model="form.sysId" style="width: 150px;" />
+          <el-input v-model="form.sysId" />
         </el-form-item>
-        <el-form-item label="标题" prop="name">
-          <el-input v-model="form.name" style="width: 370px;" />
+        <el-form-item label="所属区域" prop="area">
+          <el-input v-model="form.area" />
         </el-form-item>
-        <el-form-item label="现象" prop="appear">
-          <el-input v-model="form.appear" style="width: 370px;" />
+        <el-form-item label="系统英文名称" prop="sysEnglishName">
+          <el-input v-model="form.sysEnglishName" />
         </el-form-item>
-        <el-form-item label="根本原因" prop="rootCause">
-          <el-input v-model="form.rootCause" style="width: 370px;" />
+        <el-form-item label="上线时间" prop="goLiveDate">
+          <el-input v-model="form.goLiveDate" style="width: 370px;" />
         </el-form-item>
-        <el-form-item label="问题防范或经验教训总结" prop="solution">
-          <el-input v-model="form.solution" style="width: 370px;" />
+        <el-form-item label="下线时间" prop="shutDownDate">
+          <el-input v-model="form.shutDownDate" style="width: 370px;" />
         </el-form-item>
-        <el-form-item label="状态" prop="enabled">
-          <el-radio v-for="item in dict.dept_status" :key="item.id" v-model="form.enabled" :label="item.value">{{ item.label }}</el-radio>
+        <el-form-item label="备注" prop="remark">
+          <el-radio v-for="item in dict.dept_status" :key="item.id" v-model="form.remark" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
-        <el-form-item label="上传" prop="fileList">
-          <el-upload
-            ref="upload"
-            :limit="1"
-            :before-upload="beforeUpload"
-            :file-list="form.fileList"
-            :auto-upload="false"
-            :action="uploadUrl"
-            :http-request="uploadAction"
-            :on-change="onChange"
-          >
-            <div class="eladmin-upload"><i class="el-icon-upload" /> 添加文件</div>
-            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{ fileUploadApiL }}</div>
-          </el-upload>
-        </el-form-item>
+        
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="upload">确认</el-button>
+        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
       </div>
     </el-dialog>
-    <!--表格渲染-->
+    <!--表格渲染:load="getDeptDatas"-->
     <el-table
       ref="table"
       v-loading="crud.loading"
       lazy
-      :load="getDeptDatas"
       :data="crud.data"
     >
-      <el-table-column label="系统名称" prop="sysName" width="270" />
+      <el-table-column label="系统名称" prop="sysName" width="270">
+        <template slot-scope="scope">
+          <a
+              slot="reference"
+              :href="baseApi + '/overview/' + 'systemdetail/?sysName=' + scope.row.sysName"
+              class="el-link--primary"
+              style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color: #1890ff;font-size: 13px;"
+              target="_blank"
+          >
+            {{ scope.row.sysName }}
+          </a>
+        </template>
+      </el-table-column>
       <el-table-column label="系统编号" prop="sysId" width="100" />
       <el-table-column label="所属区域" prop="area" width="120" />
       <el-table-column label="英文名称" prop="sysEnglishName" width="150" />
@@ -99,23 +91,23 @@
 
 <script>
 import crudDept from '@/api/overview/systemlist'
-import Treeselect from '@riophae/vue-treeselect'
+// import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+// import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
-import systemName from '@/components/SystemName'
+// import systemName from '@/components/SystemName'
 import DateRangePicker from '@/components/DateRangePicker'
-import { mapGetters } from 'vuex'
-import { upload2, upload3 } from '@/utils/upload'
+import { mapGetters, mapMutations } from 'vuex'
+// import { upload2, upload3 } from '@/utils/upload'
 
 // isTop是位于顶层的意思，没有pid。
 const defaultForm = { id: null, name: null, isTop: '1', subCount: 0, pid: null, docDir: null, enabled: 'true' }
 export default {
   name: 'Overview',
-  components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker, systemName },
+  components: { crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
     return CRUD({ title: '系统清单', url: 'api/overview/systemlist', crudMethod: { ...crudDept }})
   },
@@ -125,11 +117,11 @@ export default {
   data() {
     return {
       labelPosition: 'top',
-      modelName: 'knowledge',
-      pageName: 'lessonlearn',
-      showVisible: false,
-      uploadUrl: '',
-      file: '',
+      // modelName: 'knowledge',
+      // pageName: 'lessonlearn',
+      // showVisible: false,
+      // uploadUrl: '',
+      // file: '',
       // headers: { 'Authorization': getToken() },
       depts: [],
       rules: {
@@ -139,11 +131,6 @@ export default {
         docDir: [
           { required: true, message: '请输入重要度', trigger: 'blur', type: 'number' }
         ]
-      },
-      sform: {
-        syssName: 'name1',
-        name: 'name2',
-        enabled: true
       },
       permission: {
         add: ['admin', 'dept:add'],
@@ -163,149 +150,10 @@ export default {
     ])
   },
   methods: {
-    show(id) {
-      this.showVisible = true
-      const params = { id: id }
-      crudDept.getDetail(params).then(res => {
-        this.sform = res.content[0]
-      })
+    handleChangeSystem(theSystem) {
+      this.changeSystem(theSystem)
     },
-    showSysId(item) {
-      console.log(JSON.stringify(item))
-      // this.form.sysId = item.value
-      this.$set(this.form, 'sysId', item.value)
-      this.$set(this.form, 'sysName', item.label)
-      console.log(JSON.stringify(this.form))
-    },
-    // 1.点击附件上传确认按钮时触发的函数，默认情况下(没有写http-request属性的情况下)，submit就触发了上传到后端的行为。
-    // 2.在覆盖默认上传行为的情况下，upload的submit方法，应该是做了file对象和vue-upload组件
-    // 的绑定，将上传的文件变为vue-upload组件的一个附加的对象。然后触发了http-request属性中的函数。
-    upload() {
-      console.log('upload函数执行到了')
-      console.log(this.form.name)
-      console.log(this.file)
-      if (this.$refs['form']) {
-        this.$refs['form'].validate((valid) => {
-          if (valid) {
-            if (!this.file && this.file.size === 0 && !this.form.name) {
-              this.$notify({
-                title: '请填写名称或上传的文件',
-                type: 'error',
-                duration: 2500
-              })
-              return
-            }
-            // 有文件要上传时，执行submit，没有文件要上传时，执行submitCU
-            if (this.file) {
-              this.$refs.upload.submit()
-            } else {
-              this.crud.submitCU()
-              console.log('submitCU已经执行到了')
-            }
-            console.log('submit已经执行完毕')
-          }
-        })
-      }
-    },
-    // submit触发了el-upload组件的上传方法，el-upload有默认上传方法，也可以通过http-request来自定义上传方法，这个uploadAction就是自定义的上传方法。
-    uploadAction() {
-      console.log('uploadAction开始执行')
-      console.log(this.file)
-      var data = new FormData()
-      data.append('file', this.file.raw)
-      data.append('id', this.form.id)
-      data.append('sysId', this.form.sysId)
-      data.append('sysName', this.form.sysName)
-      data.append('name', this.form.name)
-      data.append('appear', this.form.appear)
-      data.append('rootCause', this.form.rootCause)
-      data.append('solution', this.form.solution)
-      data.append('enabled', this.form.enabled)
-      if (this.crud.status.add === 1) {
-        upload2(this.fileUploadApiL, data)
-          .then((res) => {
-            this.loading = false
-            if (res) {
-              this.$notify({
-                title: '上传成功',
-                type: 'success',
-                duration: 2500
-              })
-              this.cancel()
-              this.$refs.upload.clearFiles()
-              this.crud.status.add = CRUD.STATUS.NORMAL
-              this.crud.status.cu = CRUD.STATUS.NORMAL
-              this.crud.resetForm()
-              this.crud.toQuery()
-            } else {
-              this.$notify({
-                title: res,
-                type: 'error',
-                duration: 2500
-              })
-            }
-          })
-          .catch((err) => {
-            this.loading = false
-            this.$alert(err, '错误提示', {
-              confirmButtonText: '确定',
-              dangerouslyUseHTMLString: true
-            })
-          })
-      } else if (this.crud.status.edit === 1) {
-        upload3(this.fileUploadApiL, data)
-          .then((res) => {
-            this.loading = false
-            if (res) {
-              this.$notify({
-                title: '上传成功',
-                type: 'success',
-                duration: 2500
-              })
-              this.cancel()
-              this.$refs.upload.clearFiles()
-              this.crud.status.edit = CRUD.STATUS.NORMAL
-              this.crud.status.cu = CRUD.STATUS.NORMAL
-              this.crud.resetForm()
-              this.crud.toQuery()
-            } else {
-              this.$notify({
-                title: res,
-                type: 'error',
-                duration: 2500
-              })
-            }
-          })
-          .catch((err) => {
-            this.loading = false
-            this.$alert(err, '错误提示', {
-              confirmButtonText: '确定',
-              dangerouslyUseHTMLString: true
-            })
-          })
-      }
-    },
-    onChange(file, fileList) {
-      if (fileList) {
-        this.form.fileList = fileList.slice(-1)
-      }
-      // file文件对象来源于el-upload组件？
-      this.file = file
-    },
-    cancel() {
-      this.isUpload = false
-      this.clearFile()
-      this.form.fileList = []
-    },
-    clearFile() {
-      const mainImg = this.$refs.upload
-      if (mainImg && mainImg.length) {
-        mainImg.forEach((item) => {
-          // item.uploadFiles.length = 0;
-          item.clearFiles()
-        })
-      }
-    },
+    ...mapMutations(['changeSystem']),
     handleClose(done) {
       this.$confirm('确认关闭？')
         .then(_ => {
@@ -313,85 +161,86 @@ export default {
         })
         .catch(_ => {})
     },
-    getDeptDatas(tree, treeNode, resolve) {
-      const params = { pid: tree.id }
-      setTimeout(() => {
-        crudDept.getDepts(params).then(res => {
-          resolve(res.content)
-        })
-      }, 100)
-    },
+    // 表格数据获取函数，获取子级元素的方法
+    // getDeptDatas(tree, treeNode, resolve) {
+    //   const params = { pid: tree.id }
+    //   setTimeout(() => {
+    //     crudDept.getDepts(params).then(res => {
+    //       resolve(res.content)
+    //     })
+    //   }, 100)
+    // },
     // vue upload组件上传之前触发的函数
-    beforeUpload(file) {
-      let isLt2M = true
-      isLt2M = file.size / 1024 / 1024 < 100
-      if (!isLt2M) {
-        this.loading = false
-        this.$message.error('上传文件大小不能超过 100MB!')
-      }
-      return isLt2M
-    },
-    // 新增与编辑前做的操作
-    [CRUD.HOOK.afterToCU](crud, form) {
-      // if (form.pid !== null) {
-      //   form.isTop = '0'
-      // } else if (form.id !== null) {
-      //   form.isTop = '1'
-      // }
-      form.enabled = `${form.enabled}`
-      if (form.id != null) {
-        // 编辑时，执行这个操作
-        this.getSupDepts(form.id)
-      } else {
-        // 新增时，执行这个操作
-        this.getDepts()
-      }
-    },
-    getSupDepts(id) {
-      crudDept.getDeptSuperior(id).then(res => {
-        const date = res.content
-        // this.buildDepts(date)
-        this.depts = date
-      })
-    },
-    buildDepts(depts) {
-      // 对拿到的所有部门的json数据，forEach每一个执行下面的操作
-      // 把每一个有儿子，但是儿子又不存在的项的儿子字段置为空。
-      depts.forEach(data => {
-        if (data.children) {
-          this.buildDepts(data.children)
-        }
-        if (data.hasChildren && !data.children) {
-          data.children = null
-        }
-      })
-    },
-    getDepts() {
-      crudDept.getDepts({ enabled: true }).then(res => {
-        this.depts = res.content.map(function(obj) {
-          if (obj.hasChildren) {
-            obj.children = null
-          }
-          return obj
-        })
-      })
-    },
+    // beforeUpload(file) {
+    //   let isLt2M = true
+    //   isLt2M = file.size / 1024 / 1024 < 100
+    //   if (!isLt2M) {
+    //     this.loading = false
+    //     this.$message.error('上传文件大小不能超过 100MB!')
+    //   }
+    //   return isLt2M
+    // },
+    // 启动（未提交）新增与编辑之后，做的一些操作
+    // [CRUD.HOOK.afterToCU](crud, form) {
+    //   // if (form.pid !== null) {
+    //   //   form.isTop = '0'
+    //   // } else if (form.id !== null) {
+    //   //   form.isTop = '1'
+    //   // }
+    //   form.enabled = `${form.enabled}`
+    //   if (form.id != null) {
+    //     // 编辑时，执行这个操作
+    //     this.getSupDepts(form.id)
+    //   } else {
+    //     // 新增时，执行这个操作
+    //     this.getDepts()
+    //   }
+    // },
+    // getSupDepts(id) {
+    //   crudDept.getDeptSuperior(id).then(res => {
+    //     const date = res.content
+    //     // this.buildDepts(date)
+    //     this.depts = date
+    //   })
+    // },
+    // buildDepts(depts) {
+    //   // 对拿到的所有部门的json数据，forEach每一个执行下面的操作
+    //   // 把每一个有儿子，但是儿子又不存在的项的儿子字段置为空。
+    //   depts.forEach(data => {
+    //     if (data.children) {
+    //       this.buildDepts(data.children)
+    //     }
+    //     if (data.hasChildren && !data.children) {
+    //       data.children = null
+    //     }
+    //   })
+    // },
+    // getDepts() {
+    //   crudDept.getDepts({ enabled: true }).then(res => {
+    //     this.depts = res.content.map(function(obj) {
+    //       if (obj.hasChildren) {
+    //         obj.children = null
+    //       }
+    //       return obj
+    //     })
+    //   })
+    // },
     // 获取弹窗内部门数据
-    loadDepts({ action, parentNode, callback }) {
-      if (action === LOAD_CHILDREN_OPTIONS) {
-        crudDept.getDepts({ enabled: true, pid: parentNode.id }).then(res => {
-          parentNode.children = res.content.map(function(obj) {
-            if (obj.hasChildren) {
-              obj.children = null
-            }
-            return obj
-          })
-          setTimeout(() => {
-            callback()
-          }, 100)
-        })
-      }
-    },
+    // loadDepts({ action, parentNode, callback }) {
+    //   if (action === LOAD_CHILDREN_OPTIONS) {
+    //     crudDept.getDepts({ enabled: true, pid: parentNode.id }).then(res => {
+    //       parentNode.children = res.content.map(function(obj) {
+    //         if (obj.hasChildren) {
+    //           obj.children = null
+    //         }
+    //         return obj
+    //       })
+    //       setTimeout(() => {
+    //         callback()
+    //       }, 100)
+    //     })
+    //   }
+    // },
     // 提交前的验证
     [CRUD.HOOK.afterValidateCU]() {
       if (this.form.name === null) {
@@ -408,25 +257,25 @@ export default {
       return true
     },
     // 改变状态
-    changeEnabled(data, val) {
-      this.$confirm('此操作将 "' + this.dict.label.dept_status[val] + '" ' + data.name + '部门, 是否继续？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        crudDept.edit(data).then(res => {
-          this.crud.notify(this.dict.label.dept_status[val] + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
-        }).catch(err => {
-          data.enabled = !data.enabled
-          console.log(err.response.data.message)
-        })
-      }).catch(() => {
-        data.enabled = !data.enabled
-      })
-    },
-    checkboxT(row, rowIndex) {
-      return row.id !== 1
-    }
+    // changeEnabled(data, val) {
+    //   this.$confirm('此操作将 "' + this.dict.label.dept_status[val] + '" ' + data.name + '部门, 是否继续？', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(() => {
+    //     crudDept.edit(data).then(res => {
+    //       this.crud.notify(this.dict.label.dept_status[val] + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
+    //     }).catch(err => {
+    //       data.enabled = !data.enabled
+    //       console.log(err.response.data.message)
+    //     })
+    //   }).catch(() => {
+    //     data.enabled = !data.enabled
+    //   })
+    // },
+    // checkboxT(row, rowIndex) {
+    //   return row.id !== 1
+    // }
   }
 }
 </script>

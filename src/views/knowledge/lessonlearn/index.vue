@@ -140,7 +140,7 @@
 
 <script>
 import crudDept from '@/api/knlge/lessonlearn'
-import Treeselect from '@riophae/vue-treeselect'
+// import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
@@ -156,7 +156,7 @@ import { upload2, upload3 } from '@/utils/upload'
 const defaultForm = { id: null, name: null, isTop: '1', subCount: 0, pid: null, docDir: null, enabled: 'true' }
 export default {
   name: 'Lessonlearn',
-  components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker, systemName },
+  components: { crudOperation, rrOperation, udOperation, DateRangePicker, systemName },
   cruds() {
     return CRUD({ title: 'Lesson Learn经验教训总结', url: 'api/lessonlearn', crudMethod: { ...crudDept }})
   },
