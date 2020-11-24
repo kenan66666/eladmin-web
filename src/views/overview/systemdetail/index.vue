@@ -111,7 +111,7 @@ export default {
   name: 'SystemDetail',
   components: { crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '系统清单', url: 'api/overview/systemlist'})
+    return CRUD({ title: '系统清单', url: 'api/overview/systemlist' })
   },
   mixins: [presenter(), header(), crud()],
   data() {
@@ -182,7 +182,7 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$router.push({ path: "'baseApi + '/overview/' + 'systemdetail/' + 'systemdetail/''"})
+      this.$router.push({ path: "'baseApi + '/overview/' + 'systemdetail/' + 'systemdetail/''" })
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
@@ -190,7 +190,7 @@ export default {
           done()
         })
         .catch(_ => {})
-    },
+    }
     // 表格数据获取函数，获取子级元素的方法
     // getDeptDatas(tree, treeNode, resolve) {
     //   const params = { pid: tree.id }
@@ -280,10 +280,10 @@ export default {
     //     })
     //     return false
     //   }
-      // 新建的或者说编辑的条目位于顶层，没有pid。
-      // if (this.form.isTop === '1') {
-      //   this.form.pid = null
-      // }
+    // 新建的或者说编辑的条目位于顶层，没有pid。
+    // if (this.form.isTop === '1') {
+    //   this.form.pid = null
+    // }
     //   return true
     // },
     // 改变状态

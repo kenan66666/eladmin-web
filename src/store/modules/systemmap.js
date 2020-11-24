@@ -3,7 +3,7 @@
 // const { tagsView, fixedHeader, sidebarLogo, uniqueOpened, showFooter, footerTxt, caseNumber } = defaultSettings
 
 const state = {
-  theSystem: '',
+  theSystem: ''
 }
 
 const mutations = {

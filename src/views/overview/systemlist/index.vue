@@ -40,7 +40,7 @@
         <el-form-item label="备注" prop="remark">
           <el-radio v-for="item in dict.dept_status" :key="item.id" v-model="form.remark" :label="item.value">{{ item.label }}</el-radio>
         </el-form-item>
-        
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -57,11 +57,11 @@
       <el-table-column label="系统名称" prop="sysName" width="270">
         <template slot-scope="scope">
           <a
-              slot="reference"
-              :href="baseApi + '/overview/' + 'systemdetail/?sysName=' + scope.row.sysName"
-              class="el-link--primary"
-              style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color: #1890ff;font-size: 13px;"
-              target="_blank"
+            slot="reference"
+            :href="baseApi + '/overview/' + 'systemdetail/?sysName=' + scope.row.sysName"
+            class="el-link--primary"
+            style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color: #1890ff;font-size: 13px;"
+            target="_blank"
           >
             {{ scope.row.sysName }}
           </a>
@@ -255,7 +255,7 @@ export default {
       //   this.form.pid = null
       // }
       return true
-    },
+    }
     // 改变状态
     // changeEnabled(data, val) {
     //   this.$confirm('此操作将 "' + this.dict.label.dept_status[val] + '" ' + data.name + '部门, 是否继续？', '提示', {
