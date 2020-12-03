@@ -4,7 +4,7 @@
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
         <!-- 搜索 -->
-        <el-input v-model="query.sysname" clearable size="small" placeholder="输入系统名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <el-input v-model="query.sysName" clearable size="small" placeholder="输入系统名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <el-input v-model="query.area" clearable size="small" placeholder="输入区域名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <date-range-picker v-model="query.createTime" class="date-item" />
         <el-select v-model="query.remark" clearable size="small" placeholder="状态" class="filter-item" style="width: 90px" @change="crud.toQuery">
@@ -34,7 +34,7 @@
         <el-form-item label="上线时间" prop="goLiveDate">
           <el-input v-model="form.goLiveDate" style="width: 370px;" />
         </el-form-item>
-        <el-form-item label="下线时间" prop="shutDownDate">
+        <el-form-item label="退役时间" prop="shutDownDate">
           <el-input v-model="form.shutDownDate" style="width: 370px;" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -58,7 +58,7 @@
         <template slot-scope="scope">
           <a
             slot="reference"
-            :href="baseApi + '/overview/' + 'systemdetail/?sysName=' + scope.row.sysName"
+            @click="goToDetail(scope.row.sysId)"
             class="el-link--primary"
             style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color: #1890ff;font-size: 13px;"
             target="_blank"
@@ -150,6 +150,10 @@ export default {
     ])
   },
   methods: {
+    goToDetail(url) {
+      console.log('/overview/' + 'systemdetail?sysId=' + url)
+      this.$router.push('/overview/' + 'systemdetail?sysId=' + url)
+    },
     handleChangeSystem(theSystem) {
       this.changeSystem(theSystem)
     },

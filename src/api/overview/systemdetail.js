@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getSystemOverviewMain(params) {
   return request({
-    url: 'api/overview/systemdetail/OverviewMain',
+    url: 'api/overviewmain',
     method: 'get',
     params
   })

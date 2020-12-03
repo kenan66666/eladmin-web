@@ -55,7 +55,7 @@ export default {
         this.list = []
         return
       }
-      // 奔奔觉得在setTimeout()函数里边this会不生效，所以用了这个that。
+      // 奔奔觉得在setTimeout()函数里边this会不生效，所以用了这个that。因为有个说法：箭头函数里边的this指向的不是当前vm实例。
       const that = this
       this.timer = setTimeout(() => {
         const result = []

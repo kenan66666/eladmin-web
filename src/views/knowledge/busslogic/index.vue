@@ -71,8 +71,8 @@
       @selection-change="crud.selectionChangeHandler"
     >
       <el-table-column :selectable="checkboxT" type="selection" width="55" />
-      <el-table-column label="业务逻辑与流程的名称" prop="name" width="400" />
-      <el-table-column prop="link" label="附件资料" width="220">
+      <el-table-column label="业务逻辑与流程的名称" prop="name" width="380" />
+      <el-table-column prop="link" label="附件资料" width="200">
         <template slot-scope="scope">
           <el-popover
             :content="'file/' + scope.row.docType + '/' + scope.row.docRealName"
@@ -97,7 +97,6 @@
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.enabled"
-            :disabled="scope.row.id === 1"
             active-color="#409EFF"
             inactive-color="#F56C6C"
             @change="changeEnabled(scope.row, scope.row.enabled,)"
@@ -114,7 +113,7 @@
           <udOperation
             :data="scope.row"
             :permission="permission"
-            :disabled-dle="scope.row.id === 1"
+            :disabled-dle="true"
             msg="确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！"
           />
         </template>

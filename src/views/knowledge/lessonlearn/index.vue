@@ -57,7 +57,7 @@
             :on-change="onChange"
           >
             <div class="eladmin-upload"><i class="el-icon-upload" /> 添加文件</div>
-            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M{{ fileUploadApiL }}</div>
+            <div slot="tip" class="el-upload__tip">可上传任意格式文件，且不超过100M</div>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -112,7 +112,6 @@
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.enabled"
-            :disabled="scope.row.id === 1"
             active-color="#409EFF"
             inactive-color="#F56C6C"
             @change="changeEnabled(scope.row, scope.row.enabled,)"
@@ -129,7 +128,7 @@
           <udOperation
             :data="scope.row"
             :permission="permission"
-            :disabled-dle="scope.row.id === 1"
+            :disabled-dle="true"
             msg="确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！"
           />
         </template>
@@ -450,7 +449,7 @@ export default {
     },
     // 改变状态
     changeEnabled(data, val) {
-      this.$confirm('此操作将 "' + this.dict.label.dept_status[val] + '" ' + data.name + '部门, 是否继续？', '提示', {
+      this.$confirm('此操作将 "' + this.dict.label.dept_status[val] + '" ' + data.name + '的Lesson Learn, 是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

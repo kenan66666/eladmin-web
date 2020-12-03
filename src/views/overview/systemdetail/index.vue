@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!--表单组件-->
-    <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="600px">
+    <el-dialog append-to-body :close-on-click-modal="false" width="600px">
       <!--ref=form是这个form组件的别名，通过别名指向这个dom元素，:model=form指的是form绑定的数据对象名-->
       <el-form ref="form" inline :model="formA" :rules="rules" size="small" :label-position="labelPosition" label-width="320px">
         <el-form-item label="系统名称" prop="sysName">
@@ -17,26 +17,12 @@
       </div>
     </el-dialog>
     <!--表格渲染-->
-    <el-container>
-      <el-header>系统简况</el-header>
-      <el-main>
-        <el-form ref="form" inline :model="formA" :rules="rules" size="small" :label-position="labelPosition" label-width="320px">
-          <el-form-item label="系统名称" prop="sysName">
-            A
-          </el-form-item>
-          <el-form-item label="系统名称" prop="sysName">
-            A
-          </el-form-item>
-          <el-form-item label="系统名称" prop="sysName">
-            A
-          </el-form-item>
-        </el-form>
-      </el-main>
-    </el-container>
+    <OverviewMain :system-id-father="theSystem"></OverviewMain>
+    <!--
     <el-container>
       <el-header>系统功能清单</el-header>
       <el-main>
-        <el-form ref="form" inline :model="formB" :rules="rules" size="small" :label-position="labelPosition" label-width="320px">
+        <el-form ref="form" inline :model="formB" :rules="rules" size="small" label-width="320px">
           <el-form-item label="系统名称" prop="sysName">
             <el-button type="text" @click="handleClick">B</el-button>
           </el-form-item>
@@ -94,6 +80,7 @@
         </el-table>
       </el-main>
     </el-container>
+    -->
   </div>
 </template>
 
@@ -106,10 +93,11 @@ import crudOperation from '@crud/CRUD.operation'
 import udOperation from '@crud/UD.operation'
 import DateRangePicker from '@/components/DateRangePicker'
 import { mapGetters } from 'vuex'
+import OverviewMain from '@/views/overview/systemdetail/overviewmain'
 
 export default {
   name: 'SystemDetail',
-  components: { crudOperation, rrOperation, udOperation, DateRangePicker },
+  components: { crudOperation, rrOperation, udOperation, DateRangePicker, OverviewMain },
   cruds() {
     return CRUD({ title: '系统清单', url: 'api/overview/systemlist' })
   },
@@ -119,6 +107,7 @@ export default {
       labelPosition: 'top',
       formA: {},
       formB: {},
+      theSystem: "",
       formC: {},
       systemFunctions: [],
       systemBusinessscenarios: [],
@@ -146,41 +135,43 @@ export default {
   computed: {
     ...mapGetters([
       'baseApi',
-      'fileUploadApiL',
-      'theSystem'
+      'fileUploadApiL'
     ])
   },
-  mounted() {
-    this.theSystem = this.$route.query.sysName
-    systemListAPI.getSystemOverviewMain(this.theSystem).then((res) => {
-      if (res) {
-        const content = res
-        this.formA = content
-      }
-    }
-    ),
-    systemListAPI.getSystemFunctions(this.theSystem).then((res) => {
-      if (res) {
-        const content = res
-        this.formB = content
-      }
-    }
-    ),
-    systemListAPI.getSystemBusinessscenarios(this.theSystem).then((res) => {
-      if (res) {
-        const content = res
-        this.systemFunctions = content
-      }
-    }
-    ),
-    systemListAPI.getSystemArchitectures(this.theSystem).then((res) => {
-      if (res) {
-        const content = res
-      }
-    }
-    )
+  beforeMount() {
+    this.theSystem = this.$route.query.sysId
+    console.log(this.theSystem)
+    // const params = { sysId: this.theSystem }
+    // systemListAPI.getSystemOverviewMain(params).then((res) => {
+    //   if (res) {
+    //     const content = res
+    //     this.formA = content
+    //   }
+    // }
+    // )
+    // systemListAPI.getSystemFunctions(params).then((res) => {
+    //   if (res) {
+    //     const content = res
+    //     this.formB = content
+    //   }
+    // }
+    // ),
+    // systemListAPI.getSystemBusinessscenarios(params).then((res) => {
+    //   if (res) {
+    //     const content = res
+    //     this.systemFunctions = content
+    //   }
+    // }
+    // ),
+    // systemListAPI.getSystemArchitectures(params).then((res) => {
+    //   if (res) {
+    //     const content = res
+    //   }
+    // }
+    // )
   },
   methods: {
+    // 测试router.push的页面跳转
     handleClick() {
       this.$router.push({ path: "'baseApi + '/overview/' + 'systemdetail/' + 'systemdetail/''" })
     },
@@ -320,6 +311,11 @@ export default {
  ::v-deep .el-input-number .el-input__inner {
     text-align: left;
   }
+</style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+ ::v-deep .el-form-item__label{
+    white-space:nowrap;
+}
 </style>
 <style scoped>
  .el-header, .el-footer {

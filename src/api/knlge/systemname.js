@@ -7,4 +7,12 @@ export function getSystemNames() {
   })
 }
 
-export default { getSystemNames }
+export function getSystemNameArea(params) {
+  return request({
+    url: 'api/areasystem/findbysysid',
+    method: 'get',
+    params
+  })
+}
+
+export default { getSystemNames,getSystemNameArea }

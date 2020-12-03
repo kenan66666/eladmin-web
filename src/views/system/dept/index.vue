@@ -151,6 +151,7 @@ export default {
           resolve(res.content)
         })
       }, 100)
+      // console.log(this.query)
     },
     // 新增与编辑前做的操作，点击编辑之后，执行的一个函数，
     [CRUD.HOOK.afterToCU](crud, form) {
