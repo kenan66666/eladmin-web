@@ -58,10 +58,10 @@
         <template slot-scope="scope">
           <a
             slot="reference"
-            @click="goToDetail(scope.row.sysId)"
             class="el-link--primary"
             style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color: #1890ff;font-size: 13px;"
             target="_blank"
+            @click="goToDetail(scope.row.sysId)"
           >
             {{ scope.row.sysName }}
           </a>

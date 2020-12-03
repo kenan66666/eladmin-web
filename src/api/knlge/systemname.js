@@ -15,4 +15,4 @@ export function getSystemNameArea(params) {
   })
 }
 
-export default { getSystemNames,getSystemNameArea }
+export default { getSystemNames, getSystemNameArea }

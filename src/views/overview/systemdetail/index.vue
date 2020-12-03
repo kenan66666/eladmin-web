@@ -17,7 +17,7 @@
       </div>
     </el-dialog>
     <!--表格渲染-->
-    <OverviewMain :system-id-father="theSystem"></OverviewMain>
+    <OverviewMain :system-id-father="theSystem" />
     <!--
     <el-container>
       <el-header>系统功能清单</el-header>
@@ -107,7 +107,7 @@ export default {
       labelPosition: 'top',
       formA: {},
       formB: {},
-      theSystem: "",
+      theSystem: '',
       formC: {},
       systemFunctions: [],
       systemBusinessscenarios: [],
